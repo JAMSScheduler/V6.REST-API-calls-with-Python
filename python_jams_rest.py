@@ -70,7 +70,7 @@ response.raise_for_status()
 setups = response.json()
 
 # Now we want to only get the name of the Setups
-list_of_setups = [j['setupName'] for s in sets]
+list_of_setups = [s['setupName'] for s in sets]
 
 for setup in list_of_setups:
     print setup

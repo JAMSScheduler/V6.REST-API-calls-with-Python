@@ -59,6 +59,10 @@ def get_long_running_jobs(token, threshold=0):
         start_time_utc = datetime.strptime(job_times[k],
                                            '%Y-%m-%dT%H:%M:%S.%fZ')
         time_delta = current_time - start_time_utc
+        # Change this to // 60 if you want minutes
+        # The number returned is also rounded down each time
+        # you can change this to return the full float, by using
+        # a single '/' for division.
         total_running_hours = time_delta.total_seconds() // 3600
         if total_running_hours >= threshold:
             execution_times[k] = total_running_hours

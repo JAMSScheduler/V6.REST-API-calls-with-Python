@@ -24,16 +24,21 @@ def get_jams_token(jams_user, jams_pass):
     return resp['access_token']
 
 
-def get_running_jobs_count(token):
+def get_running_jobs(token):
     """
         This is utilized to return an integer with the number of
         running jobs
+
+        return_type can either be set to count, or list. If set
+        to list, it will return a list of the jobs names.
     """
     r = requests.get(monitor_uri, headers={'Authorization': 'Bearer ' + token,
                                            'content-type': 'application/json'})
     r.raise_for_status()
-    job_count = len(r.json())
-    return job_count
+    jobs_in_monitor = r.json()
+    running_jobs = [j['jobName'] for j in jobs_in_monitor
+                    if j['currentState'] == 'Executing']
+    return running_jobs
 
 
 def get_long_running_jobs(token, threshold=0):
@@ -72,8 +77,10 @@ def get_long_running_jobs(token, threshold=0):
 # Utilization
 if __name__ == "__main__":
     token = get_jams_token(jams_user, jams_pass)
-    job_count = get_running_jobs_count(token)
+    running_job_names = get_running_jobs(token)
+    running_job_count = len(get_running_jobs(token))
     long_jobs = get_long_running_jobs(token, 3)
-    print("There are {} jobs running".format(job_count))
+    print("There are {} jobs running".format(running_job_count))
+    print("The running Jobs are: {}".format(running_job_names))
     for k in long_jobs.keys():
         print("Jobs running longer than 3 hours: {}".format(k))
